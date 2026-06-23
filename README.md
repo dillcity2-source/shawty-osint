@@ -1,1 +1,1 @@
-very bad osint tool use if u want
+somewhat good osint tool? rate it
