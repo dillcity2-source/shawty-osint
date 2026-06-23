@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SHAWTY.OSINT v5.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg2: #111;
+            --text: #e0e0e0;
+            --dim: rgba(255,107,138,0.25);
+            --border: rgba(255,45,85,0.10);
+            --glow: #ff2d55;
+            --pink: #ff6b8a;
+            --lightpink: #ff8aa8;
+            --green: #00ff88;
+            --red: #ff1744;
+            --yellow: #ff6b8a;
+            --card: rgba(255,255,255,0.02);
+        }
+
+        .light-mode {
+            --bg: #f5f0f0;
+            --bg2: #ffffff;
+            --text: #1a1a1a;
+            --dim: rgba(200,80,100,0.2);
+            --border: rgba(255,45,85,0.15);
+            --card: rgba(0,0,0,0.02);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            padding: 16px;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            background: radial-gradient(ellipse at 50% 0%, #1a0a0e 0%, var(--bg) 70%);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 0 5px 0;
+        }
+
+        .header-main {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff2d55, #ff6b8a, #ff2d55, #ff8aa8);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .header-sub {
+            font-size: 13px;
+            color: var(--pink);
+            opacity: 0.4;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        @keyframes shimmer {
+            0%,100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .glow-line {
+            width: 100px;
+            height: 2px;
+            margin: 10px auto 0;
+            background: linear-gradient(90deg, transparent, #ff2d55, #ff6b8a, transparent);
+            border-radius: 10px;
+            opacity: 0.4;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 14px;
+        }
+
+        .toolbar button {
+            background: var(--card);
+            color: var(--dim);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .toolbar button:hover {
+            background: rgba(255,45,85,0.08);
+            color: var(--pink);
+        }
+
+        .search-box {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px 28px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .search-box label {
+            color: var(--pink);
+            opacity: 0.7;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .search-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .search-row { flex-direction: row; }
+        }
+
+        .search-row input {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            border-radius: 16px;
+            outline: none;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .search-row input:focus {
+            border-color: #ff2d55;
+            box-shadow: 0 0 30px rgba(255,45,85,0.06);
+        }
+
+        .search-row input::placeholder {
+            color: var(--dim);
+            opacity: 0.4;
+        }
+
+        .search-row button {
+            background: linear-gradient(135deg, #ff2d55, #e8204a);
+            color: #fff;
+            border: none;
+            padding: 16px 28px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            transition: 0.3s;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 8px 30px rgba(255,45,85,0.2);
+        }
+
+        @media (min-width: 600px) {
+            .search-row button { width: auto; min-width: 170px; }
+        }
+
+        .search-row button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(255,45,85,0.3);
+        }
+
+        .search-row button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .search-type-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .search-type-selector button {
+            background: rgba(255,45,85,0.04);
+            color: var(--dim);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: 0.2s;
+        }
+
+        .search-type-selector button.active {
+            background: rgba(255,45,85,0.12);
+            color: var(--pink);
+            border-color: rgba(255,45,85,0.25);
+        }
+
+        .search-type-selector button:hover {
+            background: rgba(255,45,85,0.08);
+            color: var(--pink);
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .status {
+            color: var(--dim);
+            font-size: 12px;
+            padding: 8px 14px;
+            background: rgba(255,45,85,0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            flex: 1;
+        }
+
+        .status-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .status-actions button {
+            background: var(--card);
+            color: var(--dim);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: 0.2s;
+        }
+
+        .status-actions button:hover {
+            background: rgba(255,45,85,0.06);
+            color: var(--pink);
+        }
+
+        .results {
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px 28px;
+            min-height: 400px;
+            max-height: 600px;
+            overflow: auto;
+            white-space: pre-wrap;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            line-height: 2.1;
+            color: var(--text);
+            font-weight: 300;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .results .brand { color: #ff2d55; font-weight: 700; font-size: 15px; }
+        .results .glow { color: #ff2d55; font-weight: 700; font-size: 17px; }
+        .results .found { color: #00ff88; font-weight: 600; }
+        .results .notfound { color: var(--dim); opacity: 0.4; }
+        .results .blue { color: var(--lightpink); }
+        .results .pink { color: #ff4081; }
+        .results .red { color: #ff1744; }
+        .results .yellow { color: #ff6b8a; }
+        .results .dim { color: var(--dim); }
+        .results .section { color: #ff6b8a; font-weight: 600; letter-spacing: 0.5px; }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--dim);
+            opacity: 0.3;
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
+
+        .loading {
+            color: #ff2d55;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .results::-webkit-scrollbar {
+            width: 4px;
+        }
+        .results::-webkit-scrollbar-track {
+            background: rgba(255,45,85,0.02);
+            border-radius: 10px;
+        }
+        .results::-webkit-scrollbar-thumb {
+            background: rgba(255,45,85,0.12);
+            border-radius: 10px;
+        }
+
+        .history-box {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .history-box span {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            color: var(--dim);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .history-box span:hover {
+            background: rgba(255,45,85,0.06);
+            color: var(--pink);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-main">SHAWTY.OSINT</div>
+        <div class="header-sub">Intelligence · Discovery · Insight</div>
+        <div class="glow-line"></div>
+        <div class="toolbar">
+            <button id="themeToggle">🌓 Toggle Theme</button>
+            <button id="exportBtn">📤 Export TXT</button>
+            <button id="copyBtn">📋 Copy Results</button>
+            <button id="clearHistoryBtn">🗑️ Clear History</button>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <label>✦ Target — Username · Email · Phone · Name · Domain</label>
+        <div class="search-row">
+            <input type="text" id="targetInput" placeholder="username, email@domain.com, +1234567890, or full name" />
+            <button id="investigateBtn">INVESTIGATE</button>
+        </div>
+
+        <div class="search-type-selector">
+            <button class="active" data-type="auto">🔍 Auto</button>
+            <button data-type="username">👤 User</button>
+            <button data-type="email">📧 Email</button>
+            <button data-type="phone">📱 Phone</button>
+            <button data-type="name">📝 Name</button>
+            <button data-type="domain">🌐 Domain</button>
+        </div>
+
+        <div class="status-bar">
+            <div class="status" id="statusText">● Ready — 90+ platforms · All search types</div>
+            <div class="status-actions">
+                <button id="cancelBtn" style="display:none;">⏹ Cancel</button>
+            </div>
+        </div>
+
+        <div class="history-box" id="historyBox"></div>
+    </div>
+
+    <div class="results" id="resultsArea">Enter a target above to begin investigation...</div>
+
+    <div class="footer">⚠️ Use responsibly · <span>SHAWTY.OSINT v5.0</span> · Public data only</div>
+</div>
+
+<script>
+    // ============================================================
+    // 90+ PLATFORMS
+    // ============================================================
+
+    const PLATFORMS = {
+        'Twitter/X': { url: 'https://twitter.com/{}', check: async r => r.status === 200 && !r.url.includes('404') },
+        'Instagram': { url: 'https://instagram.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('Page Not Found') && !t.includes('Sorry, this page'); } },
+        'Facebook': { url: 'https://facebook.com/{}', check: async r => r.status === 200 && !r.url.includes('profile.php') },
+        'TikTok': { url: 'https://tiktok.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('could not be found'); } },
+        'Snapchat': { url: 'https://snapchat.com/add/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('Sorry') && !t.includes('could not be found'); } },
+        'Reddit': { url: 'https://reddit.com/user/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('page not found'); } },
+        'YouTube': { url: 'https://youtube.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404') && !t.includes('Not Found'); } },
+        'Discord': { url: 'https://discord.com/users/{}', check: async r => { const t=await r.text(); return r.status===200 && t.includes('Discord') && !t.includes('Login'); } },
+        'Pinterest': { url: 'https://pinterest.com/{}', check: async r => r.status === 200 && !r.url.includes('404') },
+        'Tumblr': { url: 'https://{}.tumblr.com', check: async r => r.status === 200 && !r.url.includes('404') },
+        'LinkedIn': { url: 'https://linkedin.com/in/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('page not found'); } },
+        'Twitch': { url: 'https://twitch.tv/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Spotify': { url: 'https://open.spotify.com/user/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('not found'); } },
+        'Steam': { url: 'https://steamcommunity.com/id/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('could not be found'); } },
+        'GitHub': { url: 'https://github.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'VK': { url: 'https://vk.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'BeReal': { url: 'https://bere.al/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('not found'); } },
+        'Telegram': { url: 'https://t.me/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('not found'); } },
+        'Signal': { url: 'https://signal.me/{}', check: async r => r.status === 200 },
+        'WhatsApp': { url: 'https://wa.me/{}', check: async r => r.status === 200 },
+        'Medium': { url: 'https://medium.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Substack': { url: 'https://{}.substack.com', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'SoundCloud': { url: 'https://soundcloud.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Flickr': { url: 'https://flickr.com/people/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'DeviantArt': { url: 'https://deviantart.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Mastodon': { url: 'https://mastodon.social/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Vimeo': { url: 'https://vimeo.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Dribbble': { url: 'https://dribbble.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Figma': { url: 'https://figma.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Product Hunt': { url: 'https://producthunt.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'AngelList': { url: 'https://angel.co/u/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Keybase': { url: 'https://keybase.io/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Bandcamp': { url: 'https://bandcamp.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Mixcloud': { url: 'https://mixcloud.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'PlayStation': { url: 'https://playstation.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Xbox': { url: 'https://xboxgamertag.com/search/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('not found'); } },
+        'Nintendo': { url: 'https://nintendo.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Battle.net': { url: 'https://battle.net/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Epic Games': { url: 'https://epicgames.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Riot Games': { url: 'https://riotgames.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Stack Overflow': { url: 'https://stackoverflow.com/users/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'GitLab': { url: 'https://gitlab.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Bitbucket': { url: 'https://bitbucket.org/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'HackerRank': { url: 'https://hackerrank.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'LeetCode': { url: 'https://leetcode.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'CodePen': { url: 'https://codepen.io/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Replit': { url: 'https://replit.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Dev.to': { url: 'https://dev.to/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Hashnode': { url: 'https://hashnode.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Crunchbase': { url: 'https://crunchbase.com/person/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'About.me': { url: 'https://about.me/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Bumble': { url: 'https://bumble.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Tinder': { url: 'https://tinder.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'OkCupid': { url: 'https://okcupid.com/profile/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Quora': { url: 'https://quora.com/profile/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Patreon': { url: 'https://patreon.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Kickstarter': { url: 'https://kickstarter.com/profile/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Indiegogo': { url: 'https://indiegogo.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'WordPress': { url: 'https://{}.wordpress.com', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Blogger': { url: 'https://{}.blogspot.com', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Ghost': { url: 'https://{}.ghost.io', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'AskFM': { url: 'https://ask.fm/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Disqus': { url: 'https://disqus.com/by/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Gravatar': { url: 'https://gravatar.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Imgur': { url: 'https://imgur.com/user/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Giphy': { url: 'https://giphy.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Tenor': { url: 'https://tenor.com/users/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Vine': { url: 'https://vine.co/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Periscope': { url: 'https://periscope.tv/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Meetup': { url: 'https://meetup.com/members/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Eventbrite': { url: 'https://eventbrite.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Strava': { url: 'https://strava.com/athletes/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'MyFitnessPal': { url: 'https://myfitnesspal.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Goodreads': { url: 'https://goodreads.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Letterboxd': { url: 'https://letterboxd.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Last.fm': { url: 'https://last.fm/user/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Genius': { url: 'https://genius.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'RateMyProfessor': { url: 'https://ratemyprofessors.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Chess.com': { url: 'https://chess.com/member/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Untappd': { url: 'https://untappd.com/user/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Foursquare': { url: 'https://foursquare.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Swarm': { url: 'https://swarmapp.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Fandom': { url: 'https://fandom.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Wikia': { url: 'https://wikia.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Couchsurfing': { url: 'https://couchsurfing.com/people/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Airbnb': { url: 'https://airbnb.com/users/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        // NEW PLATFORMS
+        'VSCO': { url: 'https://vsco.co/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Depop': { url: 'https://depop.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Poshmark': { url: 'https://poshmark.com/closet/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Mercari': { url: 'https://mercari.com/u/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'ReverbNation': { url: 'https://reverbnation.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Gist': { url: 'https://gist.github.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Pastebin': { url: 'https://pastebin.com/u/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Glitch': { url: 'https://glitch.com/@{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Vero': { url: 'https://vero.co/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Ello': { url: 'https://ello.co/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Minds': { url: 'https://minds.com/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('404'); } },
+        'Bitcoin': { url: 'https://blockchair.com/bitcoin/address/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('not found'); } },
+        'Ethereum': { url: 'https://etherscan.io/address/{}', check: async r => { const t=await r.text(); return r.status===200 && !t.includes('not found'); } }
+    };
+
+    // ============================================================
+    // ENGINE
+    // ============================================================
+
+    let cancelScan = false;
+    let currentResults = [];
+
+    function detectType(input) {
+        input = input.trim();
+        if (/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}$/.test(input.replace(/\s/g, ''))) return 'phone';
+        if (/^[\w\.-]+@[\w\.-]+\.\w+$/.test(input)) return 'email';
+        if (/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/.test(input)) return 'domain';
+        if (/^[a-zA-Z\s]{2,}$/.test(input) && input.includes(' ')) return 'name';
+        return 'username';
+    }
+
+    async function checkPlatform(username, platform, config) {
+        const url = config.url.replace('{}', encodeURIComponent(username));
+        try {
+            const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(5000) });
+            const exists = await config.check(response);
+            return { platform, exists, url };
+        } catch {
+            return { platform, exists: false, url, error: true };
+        }
+    }
+
+    async function investigateUsername(username, onProgress) {
+        const entries = Object.entries(PLATFORMS);
+        const results = [];
+        const batchSize = 20;
+        let completed = 0;
+
+        for (let i = 0; i < entries.length; i += batchSize) {
+            if (cancelScan) break;
+            const batch = entries.slice(i, i + batchSize);
+            const checks = batch.map(([platform, config]) => checkPlatform(username, platform, config));
+            const batchResults = await Promise.all(checks);
+            results.push(...batchResults);
+            completed += batchResults.length;
+            if (onProgress) onProgress(completed, entries.length);
+        }
+        return results;
+    }
+
+    async function investigateEmail(email) {
+        const results = [];
+        try {
+            const r = await fetch(`https://api.pwnedpasswords.com/breachedaccount/${email}`);
+            if (r.status === 200) { const d = await r.json(); results.push({ type: 'breach', count: d.length, breaches: d.map(b => b.Name) }); } 
+            else if (r.status === 404) results.push({ type: 'breach', count: 0, breaches: [] });
+        } catch { results.push({ type: 'breach', error: 'Could not check breaches' }); }
+        results.push({ type: 'info', message: `Domain: ${email.split('@')[1]}` });
+        try {
+            const r = await fetch(`https://api.github.com/search/commits?q=author-email:${email}`, { headers: { 'Accept': 'application/vnd.github.cloak-preview' } });
+            if (r.status === 200) { const d = await r.json(); results.push({ type: 'github', count: d.total_count || 0 }); }
+        } catch {}
+        return results;
+    }
+
+    async function investigatePhone(phone) {
+        const clean = phone.replace(/[\s\-\(\)]/g, '');
+        return [{ type: 'info', message: `Phone: ${phone}` }, { type: 'info', message: `Cleaned: ${clean}` }, { type: 'note', message: 'Full phone intelligence requires premium APIs' }];
+    }
+
+    async function investigateName(name) {
+        const results = [];
+        const parts = name.split(' ');
+        const first = parts[0];
+        const last = parts[parts.length - 1];
+        results.push({ type: 'info', message: `Full Name: ${name}` });
+        results.push({ type: 'info', message: `First: ${first} · Last: ${last}` });
+        const variants = [...new Set([
+            first.toLowerCase(), last.toLowerCase(),
+            `${first}${last}`.toLowerCase(),
+            `${first}.${last}`.toLowerCase(),
+            `${first}_${last}`.toLowerCase(),
+            `${first}${last[0]}`.toLowerCase(),
+            `${first[0]}${last}`.toLowerCase()
+        ])].slice(0, 5);
+        for (const v of variants) {
+            const r = await investigateUsername(v);
+            const found = r.filter(x => x.exists);
+            if (found.length) results.push({ type: 'found_variant', variant: v, platforms: found.map(x => x.platform).slice(0, 8) });
+        }
+        return results;
+    }
+
+    async function investigateDomain(domain) {
+        const results = [];
+        try {
+            const r = await fetch(`https://whois-api.com/api/v1/whois?domain=${domain}`);
+            if (r.status === 200) { const d = await r.json(); results.push({ type: 'whois', registrar: d.registrar || 'Unknown', created: d.creation_date || 'Unknown', expires: d.expiration_date || 'Unknown' }); }
+        } catch {}
+        const subs = ['www', 'mail', 'ftp', 'blog', 'api', 'dev', 'test', 'admin', 'app', 'support'];
+        const found = [];
+        for (const sub of subs) {
+            try { await fetch(`http://${sub}.${domain}`, { mode: 'no-cors' }); found.push(`${sub}.${domain}`); } catch {}
+        }
+        if (found.length) results.push({ type: 'subdomains', found });
+        return results;
+    }
+
+    // ============================================================
+    // UI
+    // ============================================================
+
+    const targetInput = document.getElementById('targetInput');
+    const investigateBtn = document.getElementById('investigateBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const statusText = document.getElementById('statusText');
+    const resultsArea = document.getElementById('resultsArea');
+    const historyBox = document.getElementById('historyBox');
+    const themeToggle = document.getElementById('themeToggle');
+    const exportBtn = document.getElementById('exportBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+    let selectedType = 'auto';
+    let history = JSON.parse(localStorage.getItem('shawty_history') || '[]');
+
+    document.querySelectorAll('.search-type-selector button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.search-type-selector button').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            selectedType = this.dataset.type;
+            const placeholders = {
+                'auto': 'username, email@domain.com, +1234567890, or full name',
+                'username': 'username (e.g., elonmusk)',
+                'email': 'email@domain.com',
+                'phone': '+1234567890 or 123-456-7890',
+                'name': 'full name (e.g., John Doe)',
+                'domain': 'domain.com'
+            };
+            targetInput.placeholder = placeholders[selectedType] || placeholders.auto;
+            statusText.textContent = `● Ready — ${selectedType.toUpperCase()} mode · 90+ platforms`;
+        });
+    });
+
+    targetInput.addEventListener('keydown', e => { if (e.key === 'Enter') startInvestigation(); });
+    investigateBtn.addEventListener('click', startInvestigation);
+    cancelBtn.addEventListener('click', () => { cancelScan = true; cancelBtn.style.display = 'none'; statusText.textContent = '⏹ Cancelled by user'; });
+
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        themeToggle.textContent = document.body.classList.contains('light-mode') ? '🌙 Dark Mode' : '🌓 Toggle Theme';
+    });
+
+    exportBtn.addEventListener('click', () => {
+        const text = resultsArea.textContent;
+        if (!text || text.includes('Enter a target')) return;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `shawty_osint_${new Date().toISOString().slice(0,10)}.txt`;
+        a.click();
+    });
+
+    copyBtn.addEventListener('click', () => {
+        const text = resultsArea.textContent;
+        if (!text || text.includes('Enter a target')) return;
+        navigator.clipboard.writeText(text).then(() => {
+            statusText.textContent = '✅ Results copied to clipboard!';
+            setTimeout(() => statusText.textContent = '● Ready — 90+ platforms', 2000);
+        });
+    });
+
+    clearHistoryBtn.addEventListener('click', () => {
+        history = [];
+        localStorage.removeItem('shawty_history');
+        renderHistory();
+        statusText.textContent = '🗑️ History cleared';
+        setTimeout(() => statusText.textContent = '● Ready — 90+ platforms', 1500);
+    });
+
+    function renderHistory() {
+        historyBox.innerHTML = history.map(h => `<span onclick="loadHistory('${h}')">${h}</span>`).join('');
+    }
+
+    function loadHistory(val) {
+        targetInput.value = val;
+        startInvestigation();
+    }
+
+    function saveHistory(target) {
+        if (!history.includes(target)) {
+            history.unshift(target);
+            if (history.length > 20) history.pop();
+            localStorage.setItem('shawty_history', JSON.stringify(history));
+            renderHistory();
+        }
+    }
+
+    renderHistory();
+
+    async function startInvestigation() {
+        const target = targetInput.value.trim();
+        if (!target) { statusText.textContent = '⚠️ Please enter a target'; return; }
+
+        cancelScan = false;
+        cancelBtn.style.display = 'inline-block';
+        investigateBtn.disabled = true;
+        investigateBtn.textContent = '⏳ SCANNING...';
+        statusText.textContent = `🔍 Scanning ${target}...`;
+        resultsArea.innerHTML = '<span class="loading">⏳ Scanning 90+ platforms... Please wait</span>';
+
+        const type = selectedType === 'auto' ? detectType(target) : selectedType;
+
+        try {
+            let results = [];
+            if (type === 'username') {
+                results = await investigateUsername(target, (done, total) => {
+                    statusText.textContent = `🔍 Scanning ${target} — ${done}/${total} platforms`;
+                });
+                displayResults(target, results);
+            } else if (type === 'email') {
+                results = await investigateEmail(target);
+                displayEmailResults(target, results);
+            } else if (type === 'phone') {
+                results = await investigatePhone(target);
+                displayGenericResults(target, results, 'PHONE REPORT', '📱');
+            } else if (type === 'name') {
+                results = await investigateName(target);
+                displayNameResults(target, results);
+            } else if (type === 'domain') {
+                results = await investigateDomain(target);
+                displayGenericResults(target, results, 'DOMAIN REPORT', '🌐');
+            } else {
+                results = await investigateUsername(target);
+                displayResults(target, results);
+            }
+            currentResults = results;
+            saveHistory(target);
+            statusText.textContent = `✅ Complete — ${type.toUpperCase()} · ${results.length} checks`;
+        } catch (err) {
+            resultsArea.innerHTML = `<span class="red">❌ Error: ${err.message}</span>`;
+            statusText.textContent = '❌ Error';
+        }
+
+        investigateBtn.disabled = false;
+        investigateBtn.textContent = 'INVESTIGATE';
+        cancelBtn.style.display = 'none';
+    }
+
+    function displayResults(target, results) {
+        const found = results.filter(r => r.exists);
+        const total = results.length;
+        let html = `<span class="brand">✦ SHAWTY.OSINT — USERNAME REPORT</span>\n`;
+        html += `<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="glow">👤 ${target}</span>\n`;
+        html += `<span class="blue">📍 Found on ${found.length}/${total} platforms</span>\n\n`;
+        if (found.length) {
+            html += `<span class="found">✅ FOUND (${found.length})</span>\n`;
+            for (const r of found) html += `  <span class="found">●</span> ${r.platform}: <span class="dim">${r.url}</span>\n`;
+            const not = results.filter(r => !r.exists && !r.error);
+            if (not.length) {
+                html += `\n<span class="notfound">○ NOT FOUND (${not.length})</span>\n`;
+                for (const r of not.slice(0, 20)) html += `  <span class="notfound">○</span> ${r.platform}\n`;
+                if (not.length > 20) html += `  <span class="dim">... and ${not.length - 20} more</span>\n`;
+            }
+        } else {
+            html += `<span class="notfound">❌ No active profiles found</span>\n`;
+        }
+        html += `\n<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="dim">SHAWTY.OSINT · ${new Date().toLocaleString()} · ${total} platforms</span>`;
+        resultsArea.innerHTML = html;
+    }
+
+    function displayEmailResults(email, results) {
+        let html = `<span class="brand">✦ SHAWTY.OSINT — EMAIL REPORT</span>\n`;
+        html += `<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="glow">📧 ${email}</span>\n\n`;
+        for (const r of results) {
+            if (r.type === 'breach') {
+                if (r.count) {
+                    html += `<span class="red">⚠️ BREACHES FOUND: ${r.count}</span>\n`;
+                    for (const b of r.breaches.slice(0, 8)) html += `  <span class="red">◈</span> ${b}\n`;
+                    if (r.breaches.length > 8) html += `  <span class="dim">... and ${r.breaches.length - 8} more</span>\n`;
+                } else html += `<span class="found">✅ No breaches found</span>\n`;
+            }
+            if (r.type === 'info') html += `<span class="blue">✦ ${r.message}</span>\n`;
+            if (r.type === 'github') {
+                if (r.count) html += `<span class="pink">📝 GitHub commits: ${r.count}</span>\n`;
+                else html += `<span class="dim">📝 No GitHub commits</span>\n`;
+            }
+        }
+        html += `\n<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="dim">SHAWTY.OSINT · ${new Date().toLocaleString()}</span>`;
+        resultsArea.innerHTML = html;
+    }
+
+    function displayGenericResults(target, results, title, icon) {
+        let html = `<span class="brand">✦ SHAWTY.OSINT — ${title}</span>\n`;
+        html += `<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="glow">${icon} ${target}</span>\n\n`;
+        for (const r of results) {
+            if (r.type === 'info') html += `<span class="blue">✦ ${r.message}</span>\n`;
+            if (r.type === 'note') html += `<span class="yellow">○ ${r.message}</span>\n`;
+            if (r.type === 'whois') {
+                html += `<span class="section">✦ WHOIS</span>\n`;
+                html += `  Registrar: <span class="pink">${r.registrar}</span>\n`;
+                html += `  Created: <span class="dim">${r.created}</span>\n`;
+                html += `  Expires: <span class="dim">${r.expires}</span>\n`;
+            }
+            if (r.type === 'subdomains') {
+                html += `\n<span class="found">📂 SUBDOMAINS (${r.found.length})</span>\n`;
+                for (const sub of r.found) html += `  <span class="found">→</span> ${sub}\n`;
+            }
+        }
+        html += `\n<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="dim">SHAWTY.OSINT · ${new Date().toLocaleString()}</span>`;
+        resultsArea.innerHTML = html;
+    }
+
+    function displayNameResults(name, results) {
+        let html = `<span class="brand">✦ SHAWTY.OSINT — NAME REPORT</span>\n`;
+        html += `<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="glow">📝 ${name}</span>\n\n`;
+        for (const r of results) {
+            if (r.type === 'info') html += `<span class="blue">✦ ${r.message}</span>\n`;
+            if (r.type === 'found_variant') {
+                html += `<span class="found">✅ Variant "${r.variant}" found on ${r.platforms.length} platforms:</span>\n`;
+                for (const p of r.platforms) html += `  <span class="found">●</span> ${p}\n`;
+            }
+        }
+        if (!results.some(r => r.type === 'found_variant')) html += `<span class="notfound">❌ No username variants found</span>\n`;
+        html += `\n<span class="dim">${'—'.repeat(70)}</span>\n`;
+        html += `<span class="dim">SHAWTY.OSINT · ${new Date().toLocaleString()}</span>`;
+        resultsArea.innerHTML = html;
+    }
+</script>
+</body>
+</html>
